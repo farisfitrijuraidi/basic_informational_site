@@ -1,3 +1,4 @@
+process.loadEnvFile();
 import http from "node:http";
 import fs from "node:fs/promises";
 
@@ -34,6 +35,6 @@ const server = http.createServer(async (req, res) => {
     return;
 });
 
-server.listen(8080, () => {
+server.listen(Number(process.env.PORT), () => {
     console.log("Server is running on http://localhost:8080");
 });
