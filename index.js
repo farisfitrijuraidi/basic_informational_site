@@ -1,57 +1,37 @@
 import http from "node:http";
 import fs from "node:fs/promises";
-import EventEmitter from "node:events";
 
 const server = http.createServer(async (req, res) => {
     const parsedURL = new URL(req.url, `http://${req.headers.host}`);
     const path = parsedURL.pathname;
     const method = req.method;
+    let file = "./404.html";
+    let statusCode = 404;
 
     if (path === "/" && method === "GET") {
-        try {
-            const htmlContent = await fs.readFile("./index.html", "utf8");
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(htmlContent);
-        } catch (error) {
-            console.error(error);
-            res.writeHead(500, { "Content-Type": "text/plain" });
-            res.end("Sorry, something went wrong on the server");
-        }
-        return;
+        file = "./index.html";
+        statusCode = 200;
+    } else if (path === "/about" && method === "GET") {
+        file = "./about.html";
+        statusCode = 200;
+    } else if (path === "/contact-me" && method === "GET") {
+        file = "./contact-me.html";
+        statusCode = 200;
+    } else {
+        file = "./404.html";
+        statusCode = 404;
     }
-    if (path === "/about" && method === "GET") {
-        try {
-            const htmlContent = await fs.readFile("./about.html", "utf8");
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(htmlContent);
-        } catch (error) {
-            console.error(error);
-            res.writeHead(500, { "Content-Type": "text/plain" });
-            res.end("Sorry, something went wrong on the server");
-        }
-        return;
-    }
-    if (path === "/contact-me" && method === "GET") {
-        try {
-            const htmlContent = await fs.readFile("./contact-me.html", "utf8");
-            res.writeHead(200, { "Content-Type": "text/html" });
-            res.end(htmlContent);
-        } catch (error) {
-            console.error(error);
-            res.writeHead(500, { "Content-Type": "text/plain" });
-            res.end("Sorry, something went wrong on the server");
-        }
-        return;
-    }
+
     try {
-        const htmlContent = await fs.readFile("./404.html", "utf8");
-        res.writeHead(404, { "Content-Type": "text/html" });
+        const htmlContent = await fs.readFile(file, "utf8");
+        res.writeHead(statusCode, { "Content-Type": "text/html" });
         res.end(htmlContent);
     } catch (error) {
         console.error(error);
         res.writeHead(500, { "Content-Type": "text/plain" });
         res.end("Sorry, something went wrong on the server");
     }
+    return;
 });
 
 server.listen(8080, () => {
